@@ -1,17 +1,14 @@
 import React, { SyntheticEvent, useRef } from "react";
 import { Box, Icon, Select } from "zmp-ui";
-import { Category } from "../models";
 // import categoriesProductsDummy from '../../dummy/category-products';
 import { cx } from "../utils";
 
 const { Option } = Select;
 
 type CategoryStoreProps = {
-  // categories: string[];
-  categories: Category[];
+  categories: string[];
   activeCate: number;
   setActiveCate: (index) => void;
-  setActiveCategory: (id) => void;
   activeFilter: string;
   setActiveFilter: (index) => void;
   filter: { key: string; name: string }[];
@@ -22,7 +19,6 @@ const CategoriesStore = ({
   categories,
   activeCate,
   setActiveCate,
-  setActiveCategory,
   activeFilter,
   setActiveFilter,
   filter,
@@ -33,7 +29,7 @@ const CategoriesStore = ({
       <div className="overflow-x-auto flex flex-row text-base mx-4">
         {categories?.map((category, index) => (
           <div
-            key={category.id}
+            key={category}
             className={cx(
               "mr-4 flex-none pb-2",
               activeCate === index
@@ -42,11 +38,10 @@ const CategoriesStore = ({
             )}
             onClick={() => {
               setActiveCate(index);
-              setActiveCategory(category.id);
             }}
             role="button"
           >
-            {category.name}
+            {category}
           </div>
         ))}
       </div>

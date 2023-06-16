@@ -8,14 +8,18 @@ import CardProductHorizontal from "../components/custom-card/card-product-horizo
 import CardShop from "../components/custom-card/card-shop";
 
 import { filter } from "../constants/referrence";
-import { Product } from "../models";
+import { Category, Product } from "../models";
 import {
+  activeCategoryState,
   activeCateState,
-  activeFilterState,
+  activeFilterState, 
   cartState,
   cartTotalPriceState,
+  categoryState,
+  productState,
   searchProductState,
   storeProductResultState,
+  storeProductsResultState,
   storeState,
 } from "../state";
 import { useNavigate } from "react-router-dom";
@@ -33,6 +37,13 @@ const HomePage: React.FunctionComponent = () => {
     useRecoilState<string>(activeFilterState);
   const storeProductResult = useRecoilValue<Product[]>(storeProductResultState);
   const setSearchProduct = useSetRecoilState(searchProductState);
+
+  const [categories, setCategories] = useRecoilState<Category[]>(categoryState);
+  const [activeCategory, setActiveCategory] = useRecoilState<number>(activeCategoryState);
+  
+  const productsStoreResult = useRecoilValue<Product[]>(storeProductsResultState);
+  const setProductsState = useSetRecoilState(productState);
+
   const navigate = useNavigate();
   const setHeader = useSetHeader();
 
@@ -45,7 +56,7 @@ const HomePage: React.FunctionComponent = () => {
       <Input.Search
         placeholder="Tìm kiếm sản phẩm"
         onSearch={handleInputSearch}
-        className="cus-input-search"
+        className="cus-input-search" 
       />
     ),
     []
@@ -58,7 +69,58 @@ const HomePage: React.FunctionComponent = () => {
       type: "secondary",
     });
     changeStatusBarColor("secondary");
+
+    loadCategories();
+    loadData();
   }, []);
+
+  const loadData = () => {
+    localStorage.setItem('token','Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcmFkbWluIiwianRpIjoiODc2YzMwNzctYTE5NC00OTNlLThiZmUtNjkwNDFiOWEwNTlhIiwiZW1haWwiOiJzdXBlcmFkbWluQGdtYWlsLmNvbSIsInVpZCI6ImJlMzllYzQzLTRjMTEtNDdkYS05NWE5LTJkZTBlYWNlNGRlYiIsImZpcnN0X25hbWUiOiJNdWtlc2giLCJsYXN0X25hbWUiOiJNdXJ1Z2FuIiwiZnVsbF9uYW1lIjoiTXVrZXNoIE11cnVnYW4iLCJpcCI6IjAuMC4wLjEiLCJyb2xlcyI6WyJBZG1pbiIsIk1vZGVyYXRvciIsIlN1cGVyQWRtaW4iLCJCYXNpYyJdLCJuYmYiOjE2ODY5MDUxODMsImV4cCI6MTY4NjkwODc4MywiaXNzIjoiQXNwTmV0Q29yZUhlcm8uQm9pbGVycGxhdGUuQXBpIiwiYXVkIjoiQXNwTmV0Q29yZUhlcm8uQm9pbGVycGxhdGUuQXBpLlVzZXIifQ.K4X-_1fea5el5B0LPEUYKOBJXkiwyP34aBwmd6JFkto');
+    const API_URL = `https://localhost:5003/api/v1/Product?pageNumber=1&pageSize=200`;
+    fetch(API_URL, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': localStorage.getItem('token') as string
+        },
+        body: null
+    })
+    .then(response => response.json())
+    .then(json => {
+      console.log(json.data);
+      setProductsState(json.data);
+      return json;
+    })
+    .catch(error => {
+      console.log(error);
+    })
+    ;                                 
+
+  }
+
+  
+  const loadCategories = () => {
+    localStorage.setItem('token','Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcmFkbWluIiwianRpIjoiODc2YzMwNzctYTE5NC00OTNlLThiZmUtNjkwNDFiOWEwNTlhIiwiZW1haWwiOiJzdXBlcmFkbWluQGdtYWlsLmNvbSIsInVpZCI6ImJlMzllYzQzLTRjMTEtNDdkYS05NWE5LTJkZTBlYWNlNGRlYiIsImZpcnN0X25hbWUiOiJNdWtlc2giLCJsYXN0X25hbWUiOiJNdXJ1Z2FuIiwiZnVsbF9uYW1lIjoiTXVrZXNoIE11cnVnYW4iLCJpcCI6IjAuMC4wLjEiLCJyb2xlcyI6WyJBZG1pbiIsIk1vZGVyYXRvciIsIlN1cGVyQWRtaW4iLCJCYXNpYyJdLCJuYmYiOjE2ODY5MDUxODMsImV4cCI6MTY4NjkwODc4MywiaXNzIjoiQXNwTmV0Q29yZUhlcm8uQm9pbGVycGxhdGUuQXBpIiwiYXVkIjoiQXNwTmV0Q29yZUhlcm8uQm9pbGVycGxhdGUuQXBpLlVzZXIifQ.K4X-_1fea5el5B0LPEUYKOBJXkiwyP34aBwmd6JFkto');
+    const API_URL = `https://localhost:5003/api/v1/Category?pageNumber=1&pageSize=200`;
+    fetch(API_URL, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': localStorage.getItem('token') as string
+        },
+        body: null
+    })
+    .then(response => response.json())
+    .then(json => {
+      setCategories(json.data);
+      return json;
+    })
+    .catch(error => {
+      console.log(error);
+    })
+    ;                                 
+
+  }
 
   return (
     <Page>
@@ -67,9 +129,11 @@ const HomePage: React.FunctionComponent = () => {
           <div className="bg-primary">
             <CardShop storeInfo={store} />
             <CategoriesStore
-              categories={store.categories!}
+              // categories={store.categories!}
+              categories={categories}
               activeCate={activeCate}
               setActiveCate={(index) => setActiveCate(index)}
+              setActiveCategory={(id) => setActiveCategory(id)}
               activeFilter={activeFilter}
               setActiveFilter={setActiveFilter}
               filter={filter}
@@ -81,11 +145,11 @@ const HomePage: React.FunctionComponent = () => {
             className="bg-white p-3"
             style={{ marginBottom: totalPrice > 0 ? "120px" : "0px" }}
           >
-            {storeProductResult.map((product) => (
+            {productsStoreResult.map((product) => (
               <div className=" mb-2 w-full" key={product.id}>
                 <CardProductHorizontal
-                  pathImg={product.imgProduct}
-                  nameProduct={product.nameProduct}
+                  pathImg={product.productImg}
+                  nameProduct={product.name}
                   salePrice={product.salePrice}
                   retailPrice={product.retailPrice}
                   productId={product.id}

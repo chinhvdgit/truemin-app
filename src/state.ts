@@ -7,6 +7,7 @@ import {
   Product,
   ProductInfoPicked,
   Store,
+  Category,
 } from "./models";
 import { getRandomInt } from "./utils";
 import { filter } from "./constants/referrence";
@@ -18,12 +19,24 @@ export const storeState = selector<Store>({
   },
 });
 
-export const productState = selector<Product[]>({
+// export const productState = selector<Product[]>({
+//   key: "product",
+//   get: ({ get }) => {
+//     const store = get(storeState);
+//     return store.listProducts;
+//   },
+// });
+
+
+export const categoryState = atom<Category[]>({
+  key: "category",
+  default: [],
+});
+
+
+export const productState = atom<Product[]>({
   key: "product",
-  get: ({ get }) => {
-    const store = get(storeState);
-    return store.listProducts;
-  },
+  default: [],
 });
 
 export const cartState = atom<StoreOrder>({
@@ -61,6 +74,11 @@ export const searchProductState = atom<string>({
   default: "",
 });
 
+export const activeCategoryState = atom<number>({
+  key: "activeCategory",
+  default: 0,
+});
+
 export const activeCateState = atom<number>({
   key: "activeCate",
   default: 0,
@@ -71,30 +89,66 @@ export const activeFilterState = atom<string>({
   default: filter[0].key,
 });
 
-export const storeProductResultState = selector<Product[]>({
-  key: "storeProductResult",
+
+export const storeProductsResultState = selector<Product[]>({
+  key: "storeProductsResult",
   get: ({ get }) => {
+
+    console.log('storeProductResultState');
+
+    get(activeCategoryState);
     get(activeCateState);
     get(searchProductState);
 
 
-    const API_URL = `https://localhost:5003/api/v1/Product?pageNumber=1&pageSize=1`;
-    fetch(API_URL, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcmFkbWluIiwianRpIjoiNzE4ZGYxOTQtYmMyNC00N2JkLTg5NDQtY2M2YWIxOGE5ZDFmIiwiZW1haWwiOiJzdXBlcmFkbWluQGdtYWlsLmNvbSIsInVpZCI6ImJlMzllYzQzLTRjMTEtNDdkYS05NWE5LTJkZTBlYWNlNGRlYiIsImZpcnN0X25hbWUiOiJNdWtlc2giLCJsYXN0X25hbWUiOiJNdXJ1Z2FuIiwiZnVsbF9uYW1lIjoiTXVrZXNoIE11cnVnYW4iLCJpcCI6IjAuMC4wLjEiLCJyb2xlcyI6WyJBZG1pbiIsIk1vZGVyYXRvciIsIlN1cGVyQWRtaW4iLCJCYXNpYyJdLCJuYmYiOjE2ODY1NjAyMTgsImV4cCI6MTY4NjU2MzgxOCwiaXNzIjoiQXNwTmV0Q29yZUhlcm8uQm9pbGVycGxhdGUuQXBpIiwiYXVkIjoiQXNwTmV0Q29yZUhlcm8uQm9pbGVycGxhdGUuQXBpLlVzZXIifQ.jDADEXpix37oOym9OVUQFVjMeJVSPdoIKndZCoF8vis'
-        },
-        body: null
-    });                                 
-
-
+    
     const store = get(storeState);
     const pos = getRandomInt(store.listProducts.length - 122, 0);
     const num = getRandomInt(120, 50);
+
+console.log(store.listProducts);
+
+const products = get(productState);
+
+    const categoryId = get(activeCategoryState);
+    return [...products].filter((item) => item.categoryId === categoryId);
+    // return [...products];
+  },
+});
+
+export const storeProductResultState = selector<Product[]>({
+  key: "storeProductResult",
+  get: ({ get }) => {
+
+    console.log('storeProductResultState');
+
+    get(activeCateState);
+    get(searchProductState);
+
+
+    
+    const store = get(storeState);
+    const pos = getRandomInt(store.listProducts.length - 122, 0);
+    const num = getRandomInt(120, 50);
+
+console.log(store.listProducts);
+
+
     return [...store.listProducts.slice(pos, pos + num)];
   },
 });
+
+// export const storeProductResultState = selector<Product[]>({
+//   key: "storeProductResult",
+//   get: ({ get }) => {
+//     get(activeCateState);
+//     get(searchProductState);
+//     const store = get(storeState);
+//     const pos = getRandomInt(store.listProducts.length - 122, 0);
+//     const num = getRandomInt(120, 50);
+//     return [...store.listProducts.slice(pos, pos + num)];
+//   },
+// });
 
 export const addressState = atom<Address>({
   key: "address",

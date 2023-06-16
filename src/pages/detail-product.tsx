@@ -106,7 +106,7 @@ const DetailProduct = () => {
               </span>
               <span className=" pl-2 pt-1 font-medium text-sm text-zinc-400">
                 đ{convertPrice(product.retailPrice)}
-              </span>
+              </span> 
             </Box>
             <Box
               m={0}

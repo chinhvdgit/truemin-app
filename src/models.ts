@@ -21,6 +21,12 @@ export type CartProduct = {
   };
 };
 
+export type Category = {
+  id: number;
+  description: string;
+  name: string;
+};
+
 export type Product = {
   id: number;
   imgProduct: string;
@@ -29,6 +35,9 @@ export type Product = {
   retailPrice: number | string;
   description: string;
   options: Options[];
+  name: string;
+  productImg: string;
+  categoryId: number;
 };
 
 export type Store = {
