@@ -26,6 +26,9 @@ import { useNavigate } from "react-router-dom";
 import useSetHeader from "../hooks/useSetHeader";
 import { changeStatusBarColor } from "../services";
 import { getConfig } from "../components/config-provider";
+import ProductService from "../services/ProductService";
+import AccountService from "../services/AccountService";
+import { LoginModel } from "../models/LoginModel";
 
 const HomePage: React.FunctionComponent = () => {
   const store = useRecoilValue(storeState);
@@ -75,32 +78,45 @@ const HomePage: React.FunctionComponent = () => {
   }, []);
 
   const loadData = () => {
-    localStorage.setItem('token','Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcmFkbWluIiwianRpIjoiODc2YzMwNzctYTE5NC00OTNlLThiZmUtNjkwNDFiOWEwNTlhIiwiZW1haWwiOiJzdXBlcmFkbWluQGdtYWlsLmNvbSIsInVpZCI6ImJlMzllYzQzLTRjMTEtNDdkYS05NWE5LTJkZTBlYWNlNGRlYiIsImZpcnN0X25hbWUiOiJNdWtlc2giLCJsYXN0X25hbWUiOiJNdXJ1Z2FuIiwiZnVsbF9uYW1lIjoiTXVrZXNoIE11cnVnYW4iLCJpcCI6IjAuMC4wLjEiLCJyb2xlcyI6WyJBZG1pbiIsIk1vZGVyYXRvciIsIlN1cGVyQWRtaW4iLCJCYXNpYyJdLCJuYmYiOjE2ODY5MDUxODMsImV4cCI6MTY4NjkwODc4MywiaXNzIjoiQXNwTmV0Q29yZUhlcm8uQm9pbGVycGxhdGUuQXBpIiwiYXVkIjoiQXNwTmV0Q29yZUhlcm8uQm9pbGVycGxhdGUuQXBpLlVzZXIifQ.K4X-_1fea5el5B0LPEUYKOBJXkiwyP34aBwmd6JFkto');
-    const API_URL = `https://localhost:5003/api/v1/Product?pageNumber=1&pageSize=200`;
-    fetch(API_URL, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': localStorage.getItem('token') as string
-        },
-        body: null
-    })
-    .then(response => response.json())
-    .then(json => {
-      console.log(json.data);
-      setProductsState(json.data);
-      return json;
+    
+    const service = new ProductService();
+    service.getProducts().then(json => {
+      setProductsState(json);
     })
     .catch(error => {
       console.log(error);
-    })
-    ;                                 
+    });
 
+    // const service = new AccountService();
+    // const login: LoginModel = {email: 'superadmin@gmail.com', password: '123Pa$$word!'}; 
+    // service.getToken(login);
+
+    // localStorage.setItem('token','Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcmFkbWluIiwianRpIjoiZTdmN2VmODUtM2Y5Ni00YmQ3LTk3ZmUtMmVlMTc0MjU1YWVmIiwiZW1haWwiOiJzdXBlcmFkbWluQGdtYWlsLmNvbSIsInVpZCI6ImJlMzllYzQzLTRjMTEtNDdkYS05NWE5LTJkZTBlYWNlNGRlYiIsImZpcnN0X25hbWUiOiJNdWtlc2giLCJsYXN0X25hbWUiOiJNdXJ1Z2FuIiwiZnVsbF9uYW1lIjoiTXVrZXNoIE11cnVnYW4iLCJpcCI6IjAuMC4wLjEiLCJyb2xlcyI6WyJBZG1pbiIsIk1vZGVyYXRvciIsIlN1cGVyQWRtaW4iLCJCYXNpYyJdLCJuYmYiOjE2ODY5NzgwODUsImV4cCI6MTY4Njk4MTY4NSwiaXNzIjoiQXNwTmV0Q29yZUhlcm8uQm9pbGVycGxhdGUuQXBpIiwiYXVkIjoiQXNwTmV0Q29yZUhlcm8uQm9pbGVycGxhdGUuQXBpLlVzZXIifQ.ClHIOWg55nlTC9omnv3gQNmN1hGcs1Lr-a0KZiqX9xM');
+    // const API_URL = `https://localhost:5003/api/v1/Product?pageNumber=1&pageSize=200`;
+    // fetch(API_URL, {
+    //     method: 'GET',
+    //     headers: {
+    //         'Content-Type': 'application/x-www-form-urlencoded',
+    //         'Authorization': localStorage.getItem('token') as string
+    //     },
+    //     body: null
+    // })
+    // .then(response => response.json())
+    // .then(json => {
+    //   console.log(json.data);
+    //   setProductsState(json.data);
+    //   return json;
+    // })
+    // .catch(error => {
+    //   console.log(error);
+    // })
+    // ;         
+    
   }
 
   
   const loadCategories = () => {
-    localStorage.setItem('token','Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcmFkbWluIiwianRpIjoiODc2YzMwNzctYTE5NC00OTNlLThiZmUtNjkwNDFiOWEwNTlhIiwiZW1haWwiOiJzdXBlcmFkbWluQGdtYWlsLmNvbSIsInVpZCI6ImJlMzllYzQzLTRjMTEtNDdkYS05NWE5LTJkZTBlYWNlNGRlYiIsImZpcnN0X25hbWUiOiJNdWtlc2giLCJsYXN0X25hbWUiOiJNdXJ1Z2FuIiwiZnVsbF9uYW1lIjoiTXVrZXNoIE11cnVnYW4iLCJpcCI6IjAuMC4wLjEiLCJyb2xlcyI6WyJBZG1pbiIsIk1vZGVyYXRvciIsIlN1cGVyQWRtaW4iLCJCYXNpYyJdLCJuYmYiOjE2ODY5MDUxODMsImV4cCI6MTY4NjkwODc4MywiaXNzIjoiQXNwTmV0Q29yZUhlcm8uQm9pbGVycGxhdGUuQXBpIiwiYXVkIjoiQXNwTmV0Q29yZUhlcm8uQm9pbGVycGxhdGUuQXBpLlVzZXIifQ.K4X-_1fea5el5B0LPEUYKOBJXkiwyP34aBwmd6JFkto');
+    localStorage.setItem('token','Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzdXBlcmFkbWluIiwianRpIjoiZTdmN2VmODUtM2Y5Ni00YmQ3LTk3ZmUtMmVlMTc0MjU1YWVmIiwiZW1haWwiOiJzdXBlcmFkbWluQGdtYWlsLmNvbSIsInVpZCI6ImJlMzllYzQzLTRjMTEtNDdkYS05NWE5LTJkZTBlYWNlNGRlYiIsImZpcnN0X25hbWUiOiJNdWtlc2giLCJsYXN0X25hbWUiOiJNdXJ1Z2FuIiwiZnVsbF9uYW1lIjoiTXVrZXNoIE11cnVnYW4iLCJpcCI6IjAuMC4wLjEiLCJyb2xlcyI6WyJBZG1pbiIsIk1vZGVyYXRvciIsIlN1cGVyQWRtaW4iLCJCYXNpYyJdLCJuYmYiOjE2ODY5NzgwODUsImV4cCI6MTY4Njk4MTY4NSwiaXNzIjoiQXNwTmV0Q29yZUhlcm8uQm9pbGVycGxhdGUuQXBpIiwiYXVkIjoiQXNwTmV0Q29yZUhlcm8uQm9pbGVycGxhdGUuQXBpLlVzZXIifQ.ClHIOWg55nlTC9omnv3gQNmN1hGcs1Lr-a0KZiqX9xM');
     const API_URL = `https://localhost:5003/api/v1/Category?pageNumber=1&pageSize=200`;
     fetch(API_URL, {
         method: 'GET',
